@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  <title>Reservations</title>
+</head>
+
+<body>
+
+  <div class="jumbotron">
+    <h1 class="display-4">Current Reservations</h1>
+    <a href="/add" class="btn btn-outline-success">Add A Reservation</a>
+    <a href="/" class="btn btn-outline-danger"><i class="fa fa-home"></i></a>
+  </div>
+
+  <div class="container mb-5">
+    <div class="row">
+      <div class="col-6">
+        <div class="card">
+          <h4 class="card-header">Current Reservations</h4>
+          <div class="card-body">
+            <span id="current-reservation-data"></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <h4 class="card-header">Waiting List</h4>
+          <div class="card-body">
+            <span id="waitinglist-data"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+  <script>
+    // on load GET table data
+    $.ajax({
+      url: "/api/reservations",
+      method: "GET"
+    }).then(function (response) {
+      console.log(response);
+
+      // take table data and print it to the page
+      for (let i = 0; i < response.length; i++) {
+
+        (i < 5) ?
+        (printReservation("current-reservation-data", i + 1, response[i])) :
+        (printReservation("waitinglist-data", i + 1, response[i]))
+
+      }
+
+    });
+
+    const printReservation = (targetDiv, tableCount, reservationInfo) => {
+
+      const reservationCard = $("<div>");
+      reservationCard
+        .addClass("card");
+
+      const cardHeader = $("<h4>");
+      cardHeader
+        .addClass("card-header")
+        .html(`Table ${tableCount}: ${reservationInfo.name}`)
+        .appendTo(reservationCard);
+
+      const cardBody = $("<div>");
+      cardBody
+        .addClass("card-body")
+        .html(
+          `Name: ${reservationInfo.name}
+              Email: ${reservationInfo.email}
+              Phone: ${reservationInfo.phoneNumber}
+              ID: ${reservationInfo.uniqueId}`
+        )
+        .appendTo(reservationCard);
+
+
+      $(`#${targetDiv}`).append(reservationCard);
+
+    }
+  </script>
+</body>
+
+</html>
